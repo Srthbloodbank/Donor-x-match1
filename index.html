@@ -34,6 +34,7 @@ h2{font-size:15px;font-weight:500;color:var(--mute);margin:22px 2px 10px}
 .ac button{border:0;background:var(--teal-soft);color:var(--teal);font:inherit;padding:9px 16px;border-radius:999px;cursor:pointer;min-height:42px}
 .ac button:active{transform:scale(.95)}
 .zones{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.zones .zone:last-child:nth-child(odd){grid-column:1/-1;min-height:150px}
 .zone{min-height:150px;justify-content:space-between}
 .homehint{text-align:center;margin:20px 0 0}
 .esheet{max-height:92dvh;overflow-y:auto}
@@ -140,8 +141,12 @@ html[data-theme="dark"] .paper td.f{background:#1d5a60}html[data-theme="dark"] .
 .tw.flat table{width:100%;font-size:12.5px}.tw.flat th,.tw.flat td{padding:7px 3px;white-space:normal;line-height:1.25}.tw.flat td:first-child,.tw.flat th:first-child{padding-left:8px}
 .rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 10px}.rate label{display:grid;gap:4px;font-size:13px;color:var(--mute)}.rate input{height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:0 10px;width:100%}
 .chk{display:block;font-size:14px;line-height:1.4}.chk input{margin-right:6px}
+.payp{padding:12px}.payrow{display:flex;align-items:center;gap:8px;margin-top:8px}.payamt{width:120px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:0 10px;text-align:right}
 .pos{color:var(--ok);font-weight:700}.neg{color:var(--red);font-weight:700}
 .sumnav{display:flex;align-items:center;gap:10px;margin:0 0 10px}.sumnav b{flex:1;text-align:center;font-size:17px}
+.offhead{text-align:center;margin:4px 0 12px}.offhead .oh1{font-size:17px;font-weight:700;color:var(--ink);line-height:1.4}.offhead .oh2{font-size:14px;color:var(--mute)}
+.bahttext{font-weight:700;margin:8px 0 4px;color:var(--ink)}
+.signs{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-around;margin-top:22px}.signs .sign{flex:1 1 150px;text-align:center;font-size:13px;line-height:1.9;color:var(--ink)}.signs .sr{font-weight:600}
 .sumh{font-size:16px;margin:16px 0 8px}
 .ptitle{display:none}
 @media print{
@@ -167,8 +172,15 @@ html[data-theme="dark"] .paper td.f{background:#1d5a60}html[data-theme="dark"] .
  /* ---- สรุปแอดมิน: ทุกหัวข้อ ทุกหน้า ---- */
  body.padm .app,body.padm #viewSch{display:none!important}
  body.padm #adm{position:static!important;display:block!important;padding:0!important;overflow:visible!important;height:auto!important;max-height:none!important;background:#fff!important;animation:none!important}
- body.padm #adm .sect{display:block!important}
- body.padm #adm .sect+.sect{break-before:page;page-break-before:always}
+ body.padm #adm .sect{display:none!important}
+ body.padm #adm .sect.on{display:block!important}
+ body.padm .official .pt2{display:none!important}
+ body.padm .offhead{display:block!important;text-align:center;margin:0 0 5mm}
+ body.padm .offhead .oh1{font-size:15pt;font-weight:700}
+ body.padm .offhead .oh2{font-size:12pt}
+ body.padm .bahttext{font-weight:700;margin:3mm 0 6mm}
+ body.padm .signs{display:flex;justify-content:space-around;gap:8mm;margin-top:12mm;break-inside:avoid}
+ body.padm .signs .sign{text-align:center;font-size:10.5pt;line-height:2}
  body.padm .ptitle{display:none!important}
  body.padm .pt2{display:block!important;font-size:15pt;font-weight:700;margin:0 0 3mm;color:#000}
  body.padm .tw{overflow:visible!important;max-height:none!important;border:0!important;background:#fff!important}
@@ -179,6 +191,9 @@ html[data-theme="dark"] .paper td.f{background:#1d5a60}html[data-theme="dark"] .
  body.padm .sumh{break-after:avoid;color:#000!important;font-size:12.5pt;margin:5mm 0 2mm}
  body.padm .card{box-shadow:none!important;border:.4pt solid #777!important;break-inside:avoid;background:#fff!important;color:#000!important}
  body.padm .rate input{border:.4pt solid #777!important;background:#fff!important;color:#000!important}
+ body.padm .payamt{border:.4pt solid #777!important;background:#fff!important;color:#000!important;width:26mm;height:auto;padding:1mm;text-align:right}
+ body.padm .payp{border:.4pt solid #777!important}
+ body.padm .comp th,body.padm .comp td{font-size:8.5pt;padding:.8mm 1.2mm}
  body.padm .pos{color:#0a6b3d!important}body.padm .neg{color:#b3153a!important}
 }
 .pt2{display:none}
@@ -202,13 +217,14 @@ html,body{background:linear-gradient(180deg,#BFE9EC 0,#DFF3F4 280px,#EAF7F6 100%
 .zone{position:relative;min-height:200px;padding:14px;border:0;color:#fff;overflow:hidden;justify-content:flex-end;align-items:flex-start;box-shadow:0 16px 26px -16px rgba(0,0,0,.55)}
 .zone[data-tone="teal"]{background:linear-gradient(150deg,#0B7F96,#22BFAE)}
 .zone[data-tone="red"]{background:linear-gradient(150deg,#D01B43,#FF7385)}
+.zone[data-tone="violet"]{background:linear-gradient(150deg,#5B3DB0,#A07BF0)}
 .zone b{font-size:18px;line-height:1.3;position:relative;z-index:1;color:#fff}
 .zone .go{font-size:13px;opacity:.92;position:relative;z-index:1}
 .zone .cnt{position:absolute;top:12px;left:12px;font-size:12px;background:rgba(255,255,255,.24);padding:3px 10px;border-radius:999px;z-index:1}
 .zone .art{position:absolute;right:2px;top:34px;width:80px;animation:bob 3.4s ease-in-out infinite}
 .zone .art svg{width:100%;height:auto;display:block}
 .homehint{font-weight:500;color:var(--teal)}
-.esheet[data-tone="teal"]{--acc:#0A8F9E;--acc2:#2BC4B4}.esheet[data-tone="red"]{--acc:#D01B43;--acc2:#FF6B81}
+.esheet[data-tone="teal"]{--acc:#0A8F9E;--acc2:#2BC4B4}.esheet[data-tone="red"]{--acc:#D01B43;--acc2:#FF6B81}.esheet[data-tone="violet"]{--acc:#5B3DB0;--acc2:#A07BF0}
 .esheet{padding-top:0;border-radius:28px 28px 0 0}
 .ehead{margin:0 -20px 4px;padding:18px 20px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border-radius:28px 28px 0 0;position:sticky;top:0;z-index:2}
 .ehead h3{color:#fff;font-size:20px}
@@ -396,19 +412,39 @@ body.psch .ptt::before{content:"ปฏิบัติงานนอกเวล
 
 <script>
 const $=s=>document.querySelector(s);
-const S={names:[],zones:[],zone:null,items:new Set(),token:null,tab:'รวมทุกคน',busy:false,rows:[],allowNew:false};
+const S={names:[],zones:[],zone:null,items:new Set(),token:null,tab:'คิดค่าตอบแทน',busy:false,rows:[],allowNew:false};
 const ICON={teal:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/><path d="M2 21h20"/><circle cx="12.5" cy="12" r=".6" fill="currentColor"/></svg>',
 red:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>'};
 
 /* เรียกเซิร์ฟเวอร์ (ใน Apps Script) หรือใช้ข้อมูลตัวอย่างเมื่อเปิดนอก Apps Script */
-function api(fn,...a){return new Promise((ok,no)=>{
-  if(window.google&&google.script&&google.script.run)google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn](...a);
-  else setTimeout(()=>ok(mock(fn,...a)),250)})}
+/* ===== ลิงก์เชื่อมข้อมูลจริง =====
+   วางลิงก์เว็บแอป Apps Script ที่ลงท้ายด้วย /exec ไว้ในเครื่องหมายคำพูดด้านล่าง
+   (ต้อง Deploy แบบ "ผู้มีสิทธิ์เข้าถึง = ทุกคน / Anyone")
+   ถ้าเว้นว่าง = เว็บเป็นเดโมข้อมูลตัวอย่าง */
+const EXEC_URL='https://script.google.com/macros/s/AKfycbwPDB2wT_JsJReueV3DKhyEdk-I_lcRTbtC00fCGOliBKrDalHoyr7VT6zH4LNjVf9G/exec';
+
+let _jn=0;
+function jsonp(fn,args){return new Promise((resolve,reject)=>{
+  const cb='__cb'+(++_jn)+'_'+Date.now();
+  const s=document.createElement('script');
+  const to=setTimeout(()=>{done();reject(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์'))},25000);
+  function done(){clearTimeout(to);try{delete window[cb]}catch(e){}s.remove()}
+  window[cb]=d=>{done();resolve(d)};
+  s.onerror=()=>{done();reject(new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจลิงก์และการตั้งค่า Deploy'))};
+  s.src=EXEC_URL+'?fn='+encodeURIComponent(fn)+'&cb='+cb+'&args='+encodeURIComponent(JSON.stringify(args||[]));
+  document.body.appendChild(s)})}
+
+function api(fn,...a){
+  if(window.google&&google.script&&google.script.run)
+    return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn](...a));
+  if(EXEC_URL&&/\/exec/.test(EXEC_URL))return jsonp(fn,a);   // เว็บภายนอก → ดึงข้อมูลจริงผ่าน JSONP
+  return new Promise(ok=>setTimeout(()=>ok(mock(fn,...a)),250)); // ยังไม่ใส่ลิงก์ = เดโม
+}
 function MROWS(){return[{id:'a1',zone:'ห้องจ่ายเลือด',item:'เช้า',worker:'ศตพร',orig:'',t:'08:48'},{id:'a2',zone:'ห้องจ่ายเลือด',item:'เช้า',worker:'สิริพงศ์',orig:'ศตพร',t:''},{id:'a3',zone:'Donor',item:'เวรเช้า Donor',worker:'ปวันรัตน์',orig:'',t:'08:15'}]}
-let MDB=null,MR={'เช้า':0,'บ่าย':0,'ดึก':600,rev:false};
+let MDB=null,MR={'เวรเช้า OPD 6 โมง':420,'เวรเช้า OPD 7 โมง':420,'เวรเช้า Donor':420,'เวรปั่นบ่าย':420,'เช้า':600,'บ่าย':600,'ดึก':690,rev:false};
 function mdb(){if(MDB)return MDB;try{MDB=JSON.parse(localStorage.getItem('mdb1')||'null')}catch(e){}
   if(!MDB){const ym=iso(new Date()).slice(0,7),mk=(d,z,i,w,o)=>({id:'m'+Math.random().toString(36).slice(2),date:ym+'-'+d,zone:z,item:i,worker:w,orig:o||'',t:''});
-    MDB=[mk('09','Donor','เวรเช้า OPD 6 โมง','ปวันรัตน์'),mk('09','Donor','เวรเช้า OPD 7 โมง','จิราพร'),mk('09','ห้องจ่ายเลือด','เช้า','กมลชนก'),mk('09','Donor','เวรเช้า Donor','บูชิตา'),mk('09','ห้องจ่ายเลือด','ดึก','สิริพงศ์','วรรษมน'),mk('10','Donor','เวรปั่นบ่าย','จิราพร'),mk('10','ห้องจ่ายเลือด','ดึก','ศตพร')]}
+    MDB=[mk('09','เจาะเลือด','เวรเช้า OPD 6 โมง','ปวันรัตน์'),mk('09','เจาะเลือด','เวรเช้า OPD 7 โมง','จิราพร'),mk('09','ห้องจ่ายเลือด','เช้า','กมลชนก'),mk('09','Donor','เวรเช้า Donor','บูชิตา'),mk('09','ห้องจ่ายเลือด','ดึก','สิริพงศ์','วรรษมน'),mk('10','Donor','เวรปั่นบ่าย','จิราพร'),mk('10','ห้องจ่ายเลือด','ดึก','ศตพร')]}
   return MDB}
 const msave=()=>{try{localStorage.setItem('mdb1',JSON.stringify(MDB))}catch(e){}};
 function mockDB(fn,a,b){
@@ -425,10 +461,11 @@ function mockDB(fn,a,b){
 function mock(fn,a,b){
   const m=mockDB(fn,a,b);if(m!==undefined)return m;
   if(fn==='getInit')return{names:['กมลชนก','จิตพิสุทธิ์','ปวันรัตน์','สิริพงศ์','ศตพร'],today:iso(new Date()),zones:[
-    {id:'Donor',label:'ห้อง Donor',tone:'teal',sub:false,items:['เวรเช้า OPD 6 โมง','เวรเช้า OPD 7 โมง','เวรเช้า Donor','เวรปั่นบ่าย']},
+    {id:'เจาะเลือด',label:'เวรเช้าเจาะเลือด OPD',tone:'violet',sub:false,items:['เวรเช้า OPD 6 โมง','เวรเช้า OPD 7 โมง']},
+    {id:'Donor',label:'ห้อง Donor',tone:'teal',sub:false,items:['เวรเช้า Donor','เวรปั่นบ่าย']},
     {id:'ห้องจ่ายเลือด',label:'ห้องจ่ายเลือด / x-match',tone:'red',sub:true,items:['เช้า','บ่าย','ดึก']}],allowNew:true,counts:(()=>{const t=iso(new Date()),o={};mdb().filter(r=>r.date===t).forEach(r=>{(o[r.zone]=o[r.zone]||new Set()).add(r.worker)});Object.keys(o).forEach(k=>o[k]=o[k].size);return o})()};
   if(fn==='saveShift')return{ok:true,saved:a.items.length,skipped:0,blocked:[],rows:MROWS()};
-  if(fn==='getMonth'||fn==='getSummary'){const ym=fn==='getMonth'?a:b,R=[{date:ym+'-09',zone:'Donor',item:'เวรเช้า OPD 6 โมง',worker:'ปวันรัตน์',orig:''},{date:ym+'-09',zone:'Donor',item:'เวรเช้า OPD 7 โมง',worker:'จิราพร',orig:''},{date:ym+'-09',zone:'ห้องจ่ายเลือด',item:'เช้า',worker:'กมลชนก',orig:''},{date:ym+'-09',zone:'ห้องจ่ายเลือด',item:'เช้า',worker:'ศิริพร',orig:''},{date:ym+'-09',zone:'Donor',item:'เวรเช้า Donor',worker:'บูชิตา',orig:''},{date:ym+'-09',zone:'ห้องจ่ายเลือด',item:'ดึก',worker:'สิริพงศ์',orig:'วรรษมน'},{date:ym+'-10',zone:'Donor',item:'เวรปั่นบ่าย',worker:'จิราพร',orig:''},{date:ym+'-10',zone:'ห้องจ่ายเลือด',item:'ดึก',worker:'ศตพร',orig:''},{date:ym+'-11',zone:'ห้องจ่ายเลือด',item:'บ่าย',worker:'สิริพงศ์',orig:'บูชิตา'}];return{ok:true,ym:ym,shade:[13],rows:R,rates:{'เช้า':0,'บ่าย':0,'ดึก':690}}}
+  if(fn==='getMonth'||fn==='getSummary'){const ym=fn==='getMonth'?a:b,R=[{date:ym+'-09',zone:'เจาะเลือด',item:'เวรเช้า OPD 6 โมง',worker:'ปวันรัตน์',orig:''},{date:ym+'-09',zone:'เจาะเลือด',item:'เวรเช้า OPD 7 โมง',worker:'จิราพร',orig:''},{date:ym+'-09',zone:'ห้องจ่ายเลือด',item:'เช้า',worker:'กมลชนก',orig:''},{date:ym+'-09',zone:'ห้องจ่ายเลือด',item:'เช้า',worker:'ศิริพร',orig:''},{date:ym+'-09',zone:'Donor',item:'เวรเช้า Donor',worker:'บูชิตา',orig:''},{date:ym+'-09',zone:'ห้องจ่ายเลือด',item:'ดึก',worker:'สิริพงศ์',orig:'วรรษมน'},{date:ym+'-10',zone:'Donor',item:'เวรปั่นบ่าย',worker:'จิราพร',orig:''},{date:ym+'-10',zone:'ห้องจ่ายเลือด',item:'ดึก',worker:'ศตพร',orig:''},{date:ym+'-11',zone:'ห้องจ่ายเลือด',item:'บ่าย',worker:'สิริพงศ์',orig:'บูชิตา'}];return{ok:true,ym:ym,shade:[13],rows:R,rates:{'เวรเช้า OPD 6 โมง':420,'เวรเช้า OPD 7 โมง':420,'เวรเช้า Donor':420,'เวรปั่นบ่าย':420,'เช้า':600,'บ่าย':600,'ดึก':690}}}
   if(fn==='getDay')return MROWS();
   if(fn==='removeEntry'||fn==='swapEntry')return{ok:true,rows:MROWS()};
   if(fn==='getSchedule')return{ok:true,grid:[['ปฏิบัติงานนอกเวลาราชการ (ตัวอย่าง)'],['วัน','วันที่','เวรเช้า x-match','','เวรเช้าห้องเจาะเลือด'],['','','คนที่ 1','คนที่ 2','ซักประวัติ'],['ศุกร์','9','กมลชนก','','ปวันรัตน์'],['เสาร์','10','จิตพิสุทธิ์','ศตพร','จิราพร']],shade:[false,false,false,false,true]};
@@ -483,6 +520,7 @@ bindName($('#name'),$('#nameAc'),$('#nameHint'));bindName($('#sub'),$('#subAc'),
 $('#moreBtn').onclick=()=>{$('#subFold').classList.add('open');$('#moreBtn').hidden=true;$('#sub').focus()};
 
 const DECO={
+ violet:'<svg viewBox="0 0 80 80"><g class="tube"><rect x="30" y="8" width="20" height="10" rx="2" fill="#fff" opacity=".9"/><rect x="32" y="16" width="16" height="52" rx="8" fill="#fff" opacity=".25"/><path d="M32 44h16v16a8 8 0 0 1-16 0Z" fill="#E23B5A"/><circle cx="37" cy="52" r="4" fill="#2B1020"/><circle cx="45" cy="52" r="4" fill="#2B1020"/><circle cx="38" cy="50.8" r="1.3" fill="#fff"/><circle cx="46" cy="50.8" r="1.3" fill="#fff"/><path d="M38 60q3 3 6 0" stroke="#7A0F26" stroke-width="2.6" stroke-linecap="round" fill="none"/></g><g class="spark"><circle cx="60" cy="20" r="4" fill="#FFE066"/><circle cx="20" cy="26" r="3" fill="#FFE066" opacity=".8"/></g></svg>',
  teal:'<svg viewBox="0 0 80 80"><g class="heart"><path d="M40 72C8 48 6 24 24 17c10-3 16 5 16 5s6-8 16-5c18 7 16 31-16 55Z" fill="#FF7A8A"/><path d="M20 30q-3 8 2 14" stroke="#fff" stroke-opacity=".6" stroke-width="4" stroke-linecap="round" fill="none"/><circle cx="31" cy="38" r="4" fill="#2B1020"/><circle cx="49" cy="38" r="4" fill="#2B1020"/><circle cx="32.2" cy="36.8" r="1.4" fill="#fff"/><circle cx="50.2" cy="36.8" r="1.4" fill="#fff"/><path d="M33 47q7 8 14 0" stroke="#7A0F26" stroke-width="3.2" stroke-linecap="round" fill="none"/><circle cx="25" cy="46" r="4" fill="#fff" opacity=".35"/><circle cx="55" cy="46" r="4" fill="#fff" opacity=".35"/></g><g class="spark"><rect x="58" y="6" width="6" height="18" rx="2" fill="#FFE066"/><rect x="52" y="12" width="18" height="6" rx="2" fill="#FFE066"/></g></svg>',
  red:'<svg viewBox="0 0 80 80"><g class="bag"><rect x="18" y="12" width="44" height="58" rx="13" fill="#fff"/><circle cx="40" cy="21" r="4.5" fill="#E8546D"/><path d="M18 42h44v15a13 13 0 0 1-13 13H31a13 13 0 0 1-13-13Z" fill="#C21B3F"/><circle cx="31" cy="47" r="3.6" fill="#fff"/><circle cx="49" cy="47" r="3.6" fill="#fff"/><circle cx="31.8" cy="47.6" r="1.8" fill="#2B1020"/><circle cx="49.8" cy="47.6" r="1.8" fill="#2B1020"/><path d="M33 55q7 7 14 0" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M40 70v8" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g><circle class="spark" cx="66" cy="14" r="5" fill="#FFE066"/></svg>'};
 const SAY=['วันนี้สู้ๆ นะ 💪','ขอบคุณที่ดูแลผู้ป่วยนะ 💙','อย่าลืมดื่มน้ำนะ 💧','เลือดทุกหยดมีค่ามาก 🩸','เหนื่อยก็พักบ้างนะ ☕','ลงเวรเสร็จแล้วเก่งมาก 🎉'];
@@ -631,7 +669,7 @@ $('#cellScrim').onclick=e=>{if(e.target===$('#cellScrim')){cellCtx=null;$('#cell
 })();
 
 /* ส่วนแอดมิน */
-const scrim=$('#scrim'),HEAD={'สรุป':[8],'ตารางเวร':[2,3],'แลกเวร':[1],'ลงเวร':[]},ADMT=['รวมทุกคน','ห้อง Donor','ห้องจ่ายเลือด'],ADM={pre:'pre',th:'th',tb:'tb'},SCH={pre:'schPre',th:'schTh',tb:'schTb'};
+const scrim=$('#scrim'),HEAD={'สรุป':[8],'ตารางเวร':[2,3],'แลกเวร':[1],'ลงเวร':[]},ADMT=['คิดค่าตอบแทน','ค่าเบิกแทนใคร','เวรเช้าเจาะเลือด OPD','ห้อง Donor','ห้องจ่ายเลือด'],ADM={pre:'pre',th:'th',tb:'tb'},SCH={pre:'schPre',th:'schTh',tb:'schTb'};
 const LOGHEAD=['วันที่','ส่วนงาน','เวร/จุด','ผู้อยู่เวร','ชื่อที่ถูกเบิก (ถ้าเบิก)','เวลาเช็กอิน','บันทึกเมื่อ'];
 $('#adminBtn').onclick=()=>{scrim.classList.add('open');$('#err').textContent='';$('#code').value='';setTimeout(()=>$('#code').focus(),250)};
 $('#cancel').onclick=()=>scrim.classList.remove('open');
@@ -663,73 +701,124 @@ async function loadSummary(){
   try{const r=await api('getSummary',S.token,ym);if(!r||!r.ok)throw new Error(r&&r.error);drawSummary(r)}
   catch(e){$('#pre').innerHTML='';const p=el('p',(e&&e.message)||'โหลดไม่สำเร็จ ปิดแล้วใส่รหัสใหม่อีกครั้ง','pre');$('#pre').appendChild(p)}
 }
+function bahtText(n){
+  n=Math.round(Number(n)||0);
+  if(n===0)return 'ศูนย์บาทถ้วน';
+  const d=['','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า'],u=['','สิบ','ร้อย','พัน','หมื่น','แสน'];
+  const grp=s=>{s=String(+s);let r='';const L=s.length;for(let i=0;i<L;i++){const g=+s[i],pp=L-1-i;if(!g)continue;
+    if(pp===0&&g===1&&L>1)r+='เอ็ด';else if(pp===1&&g===1)r+='สิบ';else if(pp===1&&g===2)r+='ยี่สิบ';else r+=d[g]+u[pp]}return r};
+  let s=String(n);const ch=[];while(s.length>6){ch.unshift(s.slice(-6));s=s.slice(0,-6)}ch.unshift(s);
+  let res='';ch.forEach((c,i)=>{const part=grp(c);if(part)res+=part;if(i<ch.length-1)res+='ล้าน'});
+  return res+'บาทถ้วน';
+}
 function drawSummary(r){
-  const root=$('#pre');root.innerHTML='';S.sumData=r;let P=root;
-  const mkSect=t=>{const d=el('div',null,'sect');d.dataset.t=t;d.appendChild(el('div','สรุปเวร '+ymTitle(r.ym)+' · '+t,'pt2'));root.appendChild(d);return d};
+  const root=$('#pre');root.innerHTML='';S.sumData=r;S.payAdj=S.payAdj||{};S.amt=S.amt||{};let P=root;
+  const mkSect=t=>{const d=el('div',null,'sect'+(t===ADMT[0]?' official':''));d.dataset.t=t;d.appendChild(el('div','สรุปเวร '+ymTitle(r.ym)+' · '+t,'pt2'));root.appendChild(d);return d};
   const nav=el('div',null,'sumnav noprint'),pv=el('button','‹','btn ghost sm'),nx=el('button','›','btn ghost sm');
   pv.onclick=()=>{S.sym=ymShift(S.sym,-1);loadSummary()};nx.onclick=()=>{S.sym=ymShift(S.sym,1);loadSummary()};
   nav.appendChild(pv);nav.appendChild(el('b',ymTitle(r.ym)));nav.appendChild(nx);P.appendChild(nav);
-  const SH=['เช้า','บ่าย','ดึก'],FS=['เวรเช้า OPD 6 โมง','เวรเช้า OPD 7 โมง','เวรเช้า Donor','เวรปั่นบ่าย'],rt=r.rates||{},rev=!!rt.rev,th=(a,b)=>a.localeCompare(b,'th');
-  const blank=()=>({n:{'เช้า':0,'บ่าย':0,'ดึก':0},sub:0,away:0}),f={},d={},sw=[];
-  r.rows.forEach(x=>{
-    if(x.zone==='Donor'){const o=f[x.worker]||(f[x.worker]={days:new Set(),st:{}});o.days.add(x.date);o.st[x.item]=(o.st[x.item]||0)+1}
-    else{const o=d[x.worker]||(d[x.worker]=blank());o.n[x.item]=(o.n[x.item]||0)+1;
-      if(x.orig){o.sub++;(d[x.orig]||(d[x.orig]=blank())).away++;sw.push(x)}}});
-  sw.sort((a,b)=>a.date.localeCompare(b.date));
-  const dn=o=>SH.reduce((a,s)=>a+(o.n[s]||0),0),dash=v=>v||'·',money=v=>Number(v).toLocaleString('th-TH');
-  const tv=v=>typeof v==='object'?v.t:v;
+
+  const DRAW=['เวรเช้า OPD 6 โมง','เวรเช้า OPD 7 โมง'],DON=['เวรเช้า Donor','เวรปั่นบ่าย'],XM=['เช้า','บ่าย','ดึก'],ALL=[...DRAW,...DON,...XM];
+  const rt=r.rates||{},th=(a,b)=>a.localeCompare(b,'th');
+  const money=v=>Number(v).toLocaleString('th-TH'),dash=v=>v||'·',tv=v=>typeof v==='object'?v.t:v;
   const table=(head,rows,foot)=>{const w=el('div',null,'tw flat'),t=document.createElement('table'),hd=document.createElement('tr');
     head.forEach(x=>hd.appendChild(el('th',x)));const thd=document.createElement('thead');thd.appendChild(hd);t.appendChild(thd);
     const tb=document.createElement('tbody');
     rows.forEach(x=>{const tr=document.createElement('tr');x.forEach(v=>tr.appendChild(el('td',tv(v),typeof v==='object'?v.c:'')));tb.appendChild(tr)});
-    if(foot){const tr=document.createElement('tr');foot.forEach(v=>{const td=el('td',null);td.appendChild(el('b',v));tr.appendChild(td)});tb.appendChild(tr)}
+    if(foot){const tr=document.createElement('tr');tr.className='foot';foot.forEach(v=>{const td=el('td',null);td.appendChild(el('b',v));tr.appendChild(td)});tb.appendChild(tr)}
     t.appendChild(tb);w.appendChild(t);return w};
   const sec=t=>P.appendChild(el('h4',t,'sumh')),none=t=>P.appendChild(el('div',t,'card sub'));
-  /* สรุปรวมทุกคน */
-  P=mkSect(ADMT[0]);sec('สรุปรวมทุกคน');
-  const names=[...new Set([...Object.keys(f),...Object.keys(d)])];
-  const tot=names.map(nm=>({nm,f:f[nm]?f[nm].days.size:0,d:d[nm]?dn(d[nm]):0})).map(x=>({...x,t:x.f+x.d})).sort((a,b)=>b.t-a.t||th(a.nm,b.nm));
-  if(!tot.length)none('ยังไม่มีข้อมูล');
-  else{const F=tot.reduce((a,x)=>a+x.f,0),D=tot.reduce((a,x)=>a+x.d,0);
-    P.appendChild(table(['ชื่อ','Donor (วัน)','x-match/\u200bจ่ายเลือด (เวร)','รวม'],tot.map(x=>[x.nm,dash(x.f),dash(x.d),String(x.t)]),['รวมทั้งหมด',String(F),String(D),String(F+D)]))}
-  /* ส่วนที่ 1 */
-  P=mkSect(ADMT[1]);sec('ส่วนที่ 1 · ห้อง Donor');
-  const fn=Object.keys(f).sort(th);
-  if(!fn.length)none('ยังไม่มีข้อมูล');
-  else P.appendChild(table(['ชื่อ','วัน',...FS],fn.map(nm=>[nm,String(f[nm].days.size),...FS.map(s=>dash(f[nm].st[s]))])));
-  /* ส่วนที่ 2 */
-  P=mkSect(ADMT[2]);sec('ส่วนที่ 2 · x-match / ห้องจ่ายเลือด');
-  const dnm=Object.keys(d).sort(th);
-  if(!dnm.length)none('ยังไม่มีข้อมูล');
-  else P.appendChild(table(['ชื่อ','อยู่จริง',...SH,'เบิกคนอื่น','ถูกเบิก'],dnm.map(nm=>{const o=d[nm];return[nm,String(dn(o)),...SH.map(s=>dash(o.n[s])),dash(o.sub),dash(o.away)]})));
-  /* ใครแลกเวรกับใคร */
-  sec('ใครเบิกชื่อใคร');
-  if(!sw.length)none('เดือนนี้ยังไม่มีรายการแลกเวร');
-  else{P.appendChild(table(['วันที่','เวร','ชื่อที่ถูกเบิก','ผู้เบิก'],sw.map(x=>[String(+x.date.slice(8)),x.item,x.orig,x.worker])));
-    P.appendChild(el('p','เบิกกัน '+sw.length+' ครั้ง','pre'))}
-  /* ใครต้องจ่ายใคร */
-  sec('ใครต้องจ่ายใคร');
-  const rc=el('div',null,'card');rc.appendChild(el('div','อัตราค่าเวร (บาท/เวร)','sub'));
-  const grid=el('div',null,'rate'),ins=SH.map(s=>{const lb=el('label',s),i=el('input');i.type='number';i.inputMode='numeric';i.min='0';i.value=Number(rt[s])||0;lb.appendChild(i);grid.appendChild(lb);return i});
-  rc.appendChild(grid);
-  const cl=el('label',null,'chk'),ck=el('input');ck.type='checkbox';ck.checked=rev;cl.appendChild(ck);
-  cl.appendChild(document.createTextNode(' ผู้เบิกเป็นฝ่ายจ่าย (ค่าเริ่มต้น: ชื่อที่ถูกเบิกจ่ายให้ผู้เบิก)'));rc.appendChild(cl);
-  const saveR=async()=>{const v={rev:ck.checked};SH.forEach((s,i)=>v[s]=Number(ins[i].value)||0);
-    try{const x=await api('saveRates',S.token,v);if(!x||!x.ok)throw new Error(x&&x.error);r.rates=x.rates;toast('บันทึกอัตราแล้ว');drawSummary(r)}
-    catch(e){toast((e&&e.message)||'บันทึกอัตราไม่ได้')}};
-  ins.forEach(i=>i.onchange=saveR);ck.onchange=saveR;P.appendChild(rc);
-  const pairs=new Map();
-  sw.forEach(x=>{const payer=rev?x.worker:x.orig,payee=rev?x.orig:x.worker,k=payer+'\u0001'+payee,o=pairs.get(k)||{payer,payee,c:{}};o.c[x.item]=(o.c[x.item]||0)+1;pairs.set(k,o)});
-  const amt=o=>SH.reduce((a,s)=>a+(o.c[s]||0)*(Number(rt[s])||0),0),net={};
-  pairs.forEach(o=>{const m=amt(o),c=el('div',null,'card');
-    c.appendChild(el('b',o.payer+' → จ่ายให้ → '+o.payee));
-    c.appendChild(el('div',SH.filter(s=>o.c[s]).map(s=>s+' ×'+o.c[s]).join(' · ')+' · '+money(m)+' บาท','sub'));P.appendChild(c);
-    (net[o.payer]||(net[o.payer]={pay:0,get:0})).pay+=m;(net[o.payee]||(net[o.payee]={pay:0,get:0})).get+=m});
-  const nn=Object.keys(net).sort((a,b)=>(net[a].get-net[a].pay)-(net[b].get-net[b].pay)||th(a,b));
-  if(nn.length)P.appendChild(table(['ชื่อ','ต้องจ่าย','ได้รับ','สุทธิ'],nn.map(nm=>{const o=net[nm],s=o.get-o.pay;
-    return[nm,o.pay?money(o.pay)+' บาท':'·',o.get?money(o.get)+' บาท':'·',{t:(s>0?'+':'')+money(s),c:s>0?'pos':s<0?'neg':''}]})));
+
+  const per={},ensure=nm=>per[nm]||(per[nm]={cnt:{},days:new Set(),sub:0,away:0}),sw=[];
+  r.rows.forEach(x=>{const o=ensure(x.worker);o.cnt[x.item]=(o.cnt[x.item]||0)+1;o.days.add(x.date);
+    if(x.orig){o.sub++;ensure(x.orig).away++;sw.push(x)}});
+  sw.sort((a,b)=>a.date.localeCompare(b.date));
+  const names=Object.keys(per).sort(th);
+  const cnt=(o,keys)=>keys.reduce((a,k)=>a+(o.cnt[k]||0),0);
+  const donCnt=o=>(o.cnt['เวรเช้า Donor']||0)+(o.cnt['เวรปั่นบ่าย']||0);
+  const rateDef=(o,items)=>items.reduce((a,k)=>a+(o.cnt[k]||0)*(Number(rt[k])||0),0);
+  const roomMoney=(nm,zid,items)=>{const k=zid+'|'+nm;return (k in S.amt)?S.amt[k]:rateDef(per[nm],items)};
+  const totalMoney=nm=>roomMoney(nm,'เจาะเลือด',DRAW)+roomMoney(nm,'Donor',DON)+roomMoney(nm,'ห้องจ่ายเลือด',XM);
+
+  /* ===== 1) คิดค่าตอบแทน (ชื่อทุกคน + ยอดรวมเงิน ไม่มีช่องอัตรา) — พิมพ์ได้ ===== */
+  P=mkSect(ADMT[0]);
+  const compWrap=el('div');P.appendChild(compWrap);
+  function renderComp(){
+    let gt=0,T={a:0,b:0,c:0,d:0,e:0,f:0,s:0};
+    const rows=names.filter(nm=>cnt(per[nm],ALL)>0).map(nm=>{const o=per[nm];
+      const a=o.cnt['เวรเช้า OPD 6 โมง']||0,b=o.cnt['เวรเช้า OPD 7 โมง']||0,c=o.cnt['เช้า']||0,d=donCnt(o),e=o.cnt['บ่าย']||0,f=o.cnt['ดึก']||0,s=a+b+c+d+e+f,m=totalMoney(nm);
+      gt+=m;T.a+=a;T.b+=b;T.c+=c;T.d+=d;T.e+=e;T.f+=f;T.s+=s;
+      return[nm,dash(a),dash(b),dash(c),dash(d),dash(e),dash(f),String(s),money(m)]});
+    compWrap.innerHTML='';
+    if(!rows.length){compWrap.appendChild(el('div','ยังไม่มีข้อมูลสำหรับเดือนนี้','card sub'));return}
+    const w=table(['ชื่อ–สกุล','เวรเช้า\n6 โมง','เวรเช้า\n7 โมง','X-match\nเช้า','ห้อง\nDonor','X-match\nบ่าย','X-match\nดึก','รวม\nเวร','รวมเงิน\n(บาท)'],
+      rows,['รวมทั้งหมด',String(T.a),String(T.b),String(T.c),String(T.d),String(T.e),String(T.f),String(T.s),money(gt)+' บาท']);
+    w.firstChild.classList.add('comp');compWrap.appendChild(w);
+    compWrap.appendChild(el('div','(ตัวอักษร) '+bahtText(gt),'bahttext'));
+    compWrap.appendChild(el('div','* ยอดเงินรวมมาจากที่กรอกไว้ในแต่ละห้อง (แท็บของแต่ละห้อง)','pre noprint'));
+  }
+  renderComp();
+
+  /* ===== 2) ค่าเบิกแทนใคร (รายคน) — พิมพ์ได้ ===== */
+  P=mkSect(ADMT[1]);
+  const rev=!!rt.rev,cl=el('label',null,'chk noprint'),ck=el('input');ck.type='checkbox';ck.checked=rev;cl.appendChild(ck);
+  cl.appendChild(document.createTextNode(' ผู้เบิกเป็นฝ่ายจ่าย (ค่าเริ่มต้น: ชื่อที่ถูกเบิกจ่ายให้ผู้เบิก)'));P.appendChild(cl);
+  ck.onchange=async()=>{const v={rev:ck.checked};ALL.forEach(k=>v[k]=Number(rt[k])||0);S.payAdj={};
+    try{const x=await api('saveRates',S.token,v);if(!x||!x.ok)throw new Error(x&&x.error);r.rates=x.rates;toast('บันทึกแล้ว');drawSummary(r)}catch(e){toast((e&&e.message)||'บันทึกไม่ได้')}};
+  if(!sw.length)none('เดือนนี้ไม่มีการเบิกเวรที่ต้องคิดเงิน');
+  else{sec('รายการเบิกชื่อ');
+    P.appendChild(table(['วันที่','เวร','ชื่อที่ถูกเบิก','ผู้เบิก'],sw.map(x=>[String(+x.date.slice(8)),x.item,x.orig,x.worker])));
+    sec('จำนวนเงินรายคู่ (แก้ตัวเลขได้)');
+    const pairs=new Map();
+    sw.forEach(x=>{const payer=rev?x.worker:x.orig,payee=rev?x.orig:x.worker,k=payer+'\u0001'+payee,o=pairs.get(k)||{payer,payee,c:{}};o.c[x.item]=(o.c[x.item]||0)+1;pairs.set(k,o)});
+    const list=[...pairs.values()].map(o=>{o.def=XM.reduce((a,s)=>a+(o.c[s]||0)*(Number(rt[s])||0),0);o.key=r.ym+'|'+o.payer+'|'+o.payee;return o});
+    const curAmt=o=>(o.key in S.payAdj)?S.payAdj[o.key]:o.def;
+    list.forEach(o=>{const c=el('div',null,'card payp');c.appendChild(el('b',o.payer+' → จ่ายให้ → '+o.payee));
+      const dt=el('div',null,'sub');dt.textContent=XM.filter(s=>o.c[s]).map(s=>s+' ×'+o.c[s]).join(' · ');c.appendChild(dt);
+      const row=el('div',null,'payrow');row.appendChild(el('span','จำนวนเงิน','sub'));
+      const inp=el('input');inp.type='number';inp.inputMode='numeric';inp.min='0';inp.className='payamt';inp.value=curAmt(o);
+      inp.oninput=()=>{S.payAdj[o.key]=Number(inp.value)||0;recNet()};
+      row.appendChild(inp);row.appendChild(el('span','บาท','sub'));c.appendChild(row);P.appendChild(c)});
+    const netWrap=el('div');P.appendChild(netWrap);
+    function recNet(){const net={};list.forEach(o=>{const m=curAmt(o);
+        (net[o.payer]||(net[o.payer]={pay:0,get:0})).pay+=m;(net[o.payee]||(net[o.payee]={pay:0,get:0})).get+=m});
+      const nn=Object.keys(net).sort((a,b)=>(net[a].get-net[a].pay)-(net[b].get-net[b].pay)||th(a,b));
+      netWrap.innerHTML='';netWrap.appendChild(el('h4','สรุปสุทธิรายคน','sumh'));
+      netWrap.appendChild(table(['ชื่อ','ต้องจ่าย','ได้รับ','สุทธิ'],nn.map(nm=>{const o=net[nm],s=o.get-o.pay;
+        return[nm,o.pay?money(o.pay)+' บาท':'·',o.get?money(o.get)+' บาท':'·',{t:(s>0?'+':'')+money(s),c:s>0?'pos':s<0?'neg':''}]})))}
+    recNet()}
+
+  /* ===== 3-5) แท็บรายห้อง: ตั้งอัตราเริ่มต้น + กรอกเงินรายคน (แก้ได้ ชั่วคราว) ===== */
+  function roomTab(idx,zid,items,title){
+    P=mkSect(ADMT[idx]);sec(title);
+    const rc=el('div',null,'card noprint');rc.appendChild(el('div','อัตราเริ่มต้น (บาท/เวร) ของห้องนี้ — เป็นเลขตั้งต้นให้แต่ละคน แก้รายคนได้ในตาราง','sub'));
+    const g=el('div',null,'rate');
+    items.forEach(k=>{const lb=el('label',k),i=el('input');i.type='number';i.inputMode='numeric';i.min='0';i.value=Number(rt[k])||0;lb.appendChild(i);g.appendChild(lb);
+      i.onchange=async()=>{const v={rev:!!rt.rev};ALL.forEach(x=>v[x]=Number(rt[x])||0);items.forEach((it,j)=>v[it]=Number(g.children[j].querySelector('input').value)||0);
+        try{const x=await api('saveRates',S.token,v);if(!x||!x.ok)throw new Error(x&&x.error);r.rates=x.rates;toast('บันทึกอัตราแล้ว');drawSummary(r)}catch(e){toast((e&&e.message)||'บันทึกไม่ได้')}}});
+    rc.appendChild(g);P.appendChild(rc);
+    const ppl=names.filter(nm=>cnt(per[nm],items)>0).sort(th);
+    if(!ppl.length){none('ยังไม่มีข้อมูล');return}
+    const w=el('div',null,'tw flat'),t=document.createElement('table'),hd=document.createElement('tr');
+    ['ชื่อ','วัน',...items,'ค่าตอบแทน\n(บาท)'].forEach(x=>hd.appendChild(el('th',x)));
+    const thd=document.createElement('thead');thd.appendChild(hd);t.appendChild(thd);
+    const tb=document.createElement('tbody');
+    ppl.forEach(nm=>{const o=per[nm],tr=document.createElement('tr');
+      tr.appendChild(el('td',nm));tr.appendChild(el('td',String(o.days.size)));
+      items.forEach(k=>tr.appendChild(el('td',dash(o.cnt[k]))));
+      const mc=document.createElement('td'),inp=el('input');inp.type='number';inp.inputMode='numeric';inp.min='0';inp.className='payamt';
+      const key=zid+'|'+nm;inp.value=(key in S.amt)?S.amt[key]:rateDef(o,items);
+      inp.oninput=()=>{S.amt[key]=Number(inp.value)||0;renderComp()};
+      mc.appendChild(inp);tr.appendChild(mc);tb.appendChild(tr)});
+    t.appendChild(tb);w.appendChild(t);P.appendChild(w);
+  }
+  roomTab(2,'เจาะเลือด',DRAW,'เวรเช้าเจาะเลือด OPD');
+  roomTab(3,'Donor',DON,'ห้อง Donor');
+  roomTab(4,'ห้องจ่ายเลือด',XM,'ห้องจ่ายเลือด / x-match');
+
   showSect();
 }
+
 function showSect(){document.querySelectorAll('#pre .sect').forEach(s=>s.classList.toggle('on',s.dataset.t===S.tab))}
 function drawGrid(g,tab,E){
   let w=0;g.forEach(r=>r.forEach((v,i)=>{if(v!==''&&i+1>w)w=i+1}));g=g.map(r=>r.slice(0,w));
@@ -759,7 +848,7 @@ const TM=['มกราคม','กุมภาพันธ์','มีนาค
 const ymShift=(ym,n)=>{const [y,m]=ym.split('-').map(Number),d=new Date(y,m-1+n,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
 const ymTitle=ym=>{const [y,m]=ym.split('-').map(Number);return TM[m-1]+' '+(y+543)};
 /* คอลัมน์ตามแอปเดิม: [หัวตาราง, ห้อง, เวร/จุด] */
-const SCOL=[['เวรเช้า\nOPD\n6 โมง','Donor','เวรเช้า OPD 6 โมง'],['เวรเช้า\nOPD\n7 โมง','Donor','เวรเช้า OPD 7 โมง'],['X-match\nเช้า','ห้องจ่ายเลือด','เช้า'],['เวรเช้า\nDonor','Donor','เวรเช้า Donor'],['เวรปั่น\nบ่าย','Donor','เวรปั่นบ่าย'],['X-match\nบ่าย','ห้องจ่ายเลือด','บ่าย'],['x-match\nดึก','ห้องจ่ายเลือด','ดึก']];
+const SCOL=[['เวรเช้า\nOPD\n6 โมง','เจาะเลือด','เวรเช้า OPD 6 โมง'],['เวรเช้า\nOPD\n7 โมง','เจาะเลือด','เวรเช้า OPD 7 โมง'],['X-match\nเช้า','ห้องจ่ายเลือด','เช้า'],['เวรเช้า\nDonor','Donor','เวรเช้า Donor'],['เวรปั่น\nบ่าย','Donor','เวรปั่นบ่าย'],['X-match\nบ่าย','ห้องจ่ายเลือด','บ่าย'],['x-match\nดึก','ห้องจ่ายเลือด','ดึก']];
 async function loadSch(){
   const ym=S.ym;let c=null;try{c=JSON.parse(localStorage.getItem('mon1_'+ym)||'null')}catch(e){}
   if(c)drawMonth(c);else{$('#ptt').textContent=ymTitle(ym);$('#paperT').innerHTML='';$('#pfoot').textContent=''}
@@ -808,7 +897,7 @@ function printSchedule(){
   resetScroll();document.body.classList.add('psch');setPage('@page{size:A4 portrait;margin:8mm}');
   setTimeout(()=>window.print(),80);
 }
-function printSummary(){resetScroll();document.body.classList.add('padm');setPage('@page{size:A4 portrait;margin:12mm}');setTimeout(()=>window.print(),80)}
+function printSummary(){resetScroll();document.body.classList.add('padm');var land=S.tab==='คิดค่าตอบแทน';setPage('@page{size:A4 '+(land?'landscape':'portrait')+';margin:'+(land?'8mm':'12mm')+'}');setTimeout(()=>window.print(),80)}
 $('#schPrint').onclick=printSchedule;
 window.addEventListener('afterprint',()=>{document.body.classList.remove('psch','padm');const r=document.documentElement.style;r.removeProperty('--rh');r.removeProperty('--pz')});
 const applyTheme=t=>{document.documentElement.dataset.theme=t;try{localStorage.setItem('th',t)}catch(e){}$('#themeBtn').textContent=t==='dark'?'☀️':'🌙'};
