@@ -138,7 +138,7 @@ html[data-theme="dark"] .paper td.f{background:#1d5a60}html[data-theme="dark"] .
 .paper tr.today .c0{color:var(--red);font-weight:700}
 .ptt{flex:1;text-align:center}
 .tw.flat{max-height:none;margin-bottom:12px}.tw.flat td:not(:first-child),.tw.flat th:not(:first-child){text-align:center}
-.tw.flat table{width:100%;font-size:12.5px}.tw.flat th,.tw.flat td{padding:7px 3px;white-space:normal;line-height:1.25}.tw.flat td:first-child,.tw.flat th:first-child{padding-left:8px}
+.tw.flat table{width:100%;font-size:12.5px}.tw.flat th,.tw.flat td{padding:7px 3px;white-space:normal;line-height:1.25}.tw.flat td:first-child,.tw.flat th:first-child{padding-left:8px;white-space:nowrap}
 .rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 10px}.rate label{display:grid;gap:4px;font-size:13px;color:var(--mute)}.rate input{height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:0 10px;width:100%}
 .chk{display:block;font-size:14px;line-height:1.4}.chk input{margin-right:6px}
 .payp{padding:12px}.payrow{display:flex;align-items:center;gap:8px;margin-top:8px}.payamt{width:120px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:0 10px;text-align:right}
@@ -185,8 +185,13 @@ html[data-theme="dark"] .paper td.f{background:#1d5a60}html[data-theme="dark"] .
  body.padm .pt2{display:block!important;font-size:15pt;font-weight:700;margin:0 0 3mm;color:#000}
  body.padm .tw{overflow:visible!important;max-height:none!important;border:0!important;background:#fff!important}
  body.padm table{font-size:10pt;width:100%}
- body.padm th{background:#eee!important;color:#000!important;position:static!important;border:.4pt solid #777;padding:1.6mm 2mm;white-space:normal}
- body.padm td{border:.4pt solid #777;padding:1.6mm 2mm;white-space:normal;color:#000}
+ body.padm th{background:#dfe6e9!important;color:#000!important;position:static!important;border:.7pt solid #333;padding:1.6mm 2mm;white-space:normal}
+ body.padm td{border:.7pt solid #333;padding:1.6mm 2mm;white-space:normal;color:#000}
+ body.padm .tw.flat td:first-child,body.padm .tw.flat th:first-child{white-space:normal}
+ /* บังคับตารางให้พอดีหน้ากระดาษเสมอ ตัวอักษรตัดบรรทัดในช่อง ไม่ล้นจนขาด */
+ body.padm .tw.flat table{table-layout:fixed;width:100%}
+ body.padm .tw.flat th,body.padm .tw.flat td{overflow:hidden;word-break:break-word;overflow-wrap:break-word}
+ body.padm .comp td:first-child,body.padm .comp th:first-child{width:34mm}
  body.padm tr{break-inside:avoid;page-break-inside:avoid}
  body.padm .sumh{break-after:avoid;color:#000!important;font-size:12.5pt;margin:5mm 0 2mm}
  body.padm .card{box-shadow:none!important;border:.4pt solid #777!important;break-inside:avoid;background:#fff!important;color:#000!important}
@@ -301,7 +306,9 @@ body.psch .ptt::before{content:"ปฏิบัติงานนอกเวล
 .pend{opacity:.55;font-style:italic}
 @media (hover:hover){.zone{transition:transform .2s,box-shadow .2s}.zone:hover{transform:translateY(-4px)}.chip:hover,.pill:hover{filter:brightness(1.06)}}
 @media (min-width:720px){
- .app{max-width:760px}
+ .app{max-width:1040px}
+ .zones{grid-template-columns:1fr 1fr 1fr}
+ .zones .zone:last-child:nth-child(odd){grid-column:auto}
  .scrim{align-items:center;padding:24px}
  .sheet{max-width:540px;border-radius:26px!important;transform:translateY(22px) scale(.97);opacity:0;transition:transform .28s cubic-bezier(.2,.9,.3,1),opacity .2s;padding-bottom:24px;max-height:90vh;overflow-y:auto}
  .scrim.open .sheet{transform:none;opacity:1}
@@ -475,6 +482,7 @@ function mock(fn,a,b){
 
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const shift=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+S.ym=iso(new Date()).slice(0,7);   /* ตั้งเดือนปัจจุบันไว้ก่อน เพื่อให้พร้อมใช้งานตอนเริ่มโหลด */
 function dlabel(){const v=$('#date').value;if(!v)return;const d=new Date(v+'T00:00:00');
   $('#dlabel').textContent=d.toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.querySelectorAll('.pill[data-d]').forEach(p=>p.setAttribute('aria-pressed',shift(+p.dataset.d)===v))}
@@ -486,6 +494,8 @@ function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');cl
 
 /* ช่องชื่อพร้อมแนะนำชื่อ ต้องตรงกับรายชื่อในชีตเท่านั้น */
 const nz=s=>String(s||'').normalize('NFC').replace(/[\s\u200b-\u200d\ufeff]+/g,'');
+/* รวมชื่อที่สะกดเหมือนกันเป๊ะ (ชื่อ+นามสกุลซ้ำ) ให้เหลือชื่อเดียว */
+const dedupeNames=arr=>{const seen=new Set(),out=[];(arr||[]).forEach(n=>{const k=nz(n);if(k&&!seen.has(k)){seen.add(k);out.push(String(n).trim())}});return out};
 /* ชื่อที่แสดงในตารางเวร: ตัดคำนำหน้าและนามสกุลออก เหลือแต่ชื่อ (หน้าสรุปยังแสดงชื่อเต็มตามที่บันทึก) */
 const TT_ALWAYS=['ว่าที่ร้อยตรีหญิง','ว่าที่ร้อยโทหญิง','ว่าที่ร้อยตรี','ว่าที่ร้อยโท','ว่าที่ ร.ต.หญิง','ว่าที่ ร.ต.','ว่าที่ร.ต.','นายแพทย์','แพทย์หญิง','ทันตแพทย์หญิง','ทันตแพทย์','เภสัชกรหญิง','เภสัชกร','นางสาว','ผศ.ดร.','รศ.ดร.','ศ.ดร.','ผศ.','รศ.','ศ.','ดร.','นพ.','พญ.','ภก.','ภญ.','ทพ.','ทพญ.','น.ส.','นส.','ด.ญ.','ด.ช.','Mr.','Mrs.','Ms.','Miss','Dr.'].sort((a,b)=>b.length-a.length);
 const TT_SPACE=['นาย','นาง','คุณ'];
@@ -496,6 +506,14 @@ function shortName(s){let t=String(s||'').normalize('NFC').replace(/\s+/g,' ').t
     if(!hit&&sp)for(const p of TT_SPACE){if(t.length>p.length&&t.startsWith(p)){t=t.slice(p.length).trim();hit=true;break}}
     if(!hit)break}
   return t.split(' ')[0]||t}
+/* ตัดคำนำหน้า (นาย/นาง/นางสาว/น.ส./ว่าที่ ฯลฯ) ออก เหลือ ชื่อ+นามสกุล เต็ม — ใช้รวมคนที่ชื่อ-สกุลตรงกันแต่ต่างคำนำหน้า */
+function stripTitle(s){let t=String(s||'').normalize('NFC').replace(/\s+/g,' ').trim();if(!t)return '';
+  const sp=t.indexOf(' ')>0;
+  for(let g=0;g<2;g++){let hit=false;
+    for(const p of TT_ALWAYS){if(t.length>p.length&&t.toLowerCase().startsWith(p.toLowerCase())){t=t.slice(p.length).trim();hit=true;break}}
+    if(!hit&&sp)for(const p of TT_SPACE){if(t.length>p.length&&t.startsWith(p)){t=t.slice(p.length).trim();hit=true;break}}
+    if(!hit)break}
+  return t}
 /* พิมพ์เฉพาะชื่อ ถ้าตรงกับคนเดียวในรายชื่อ จะใช้ชื่อเต็มของคนนั้น */
 const shortHits=q=>{const k=nz(q);return k?S.names.filter(n=>nz(shortName(n))===k):[]};
 const known=q=>{const k=nz(q);if(!k)return '';const ex=S.names.find(n=>nz(n)===k);if(ex)return ex;const h=shortHits(q);return h.length===1?h[0]:''};
@@ -544,7 +562,7 @@ function markMe(){const q=$('#meQ').value,k=nz(q);let n=0,sub=0;
   if(k&&!known(q))S.names.filter(x=>nz(x).includes(k)).slice(0,5).forEach(x=>{const b=document.createElement('button');b.type='button';b.textContent=x;b.onclick=()=>{$('#meQ').value=x;markMe()};box.appendChild(b)})}
 $('#meQ').oninput=markMe;
 function renderZones(init){
-  S.names=init.names;S.zones=init.zones;S.allowNew=!!init.allowNew;S.counts=init.counts||S.counts||{};
+  S.names=dedupeNames(init.names);S.zones=init.zones;S.allowNew=!!init.allowNew;S.counts=init.counts||S.counts||{};
   const z=$('#zones');z.innerHTML='';
   init.zones.forEach(o=>{const b=document.createElement('button');b.className='zone';b.dataset.tone=o.tone;b.setAttribute('aria-pressed','false');
     b.innerHTML='<span class="cnt"></span><span class="art">'+(DECO[o.tone]||'')+'</span><b></b><span class="go">แตะเพื่อลงเวร ›</span>';b.querySelector('b').textContent=o.label;b.querySelector('.cnt').dataset.z=o.id;
@@ -669,7 +687,7 @@ $('#cellScrim').onclick=e=>{if(e.target===$('#cellScrim')){cellCtx=null;$('#cell
 })();
 
 /* ส่วนแอดมิน */
-const scrim=$('#scrim'),HEAD={'สรุป':[8],'ตารางเวร':[2,3],'แลกเวร':[1],'ลงเวร':[]},ADMT=['คิดค่าตอบแทน','ค่าเบิกแทนใคร','เวรเช้าเจาะเลือด OPD','ห้อง Donor','ห้องจ่ายเลือด'],ADM={pre:'pre',th:'th',tb:'tb'},SCH={pre:'schPre',th:'schTh',tb:'schTb'};
+const scrim=$('#scrim'),HEAD={'สรุป':[8],'ตารางเวร':[2,3],'แลกเวร':[1],'ลงเวร':[]},ADMT=['คิดค่าตอบแทน','ค่าเบิกแทนใคร','เวรเช้าเจาะเลือด OPD','ห้อง Donor','ห้องจ่ายเลือด','สรุปจ่ายแทน'],ADM={pre:'pre',th:'th',tb:'tb'},SCH={pre:'schPre',th:'schTh',tb:'schTb'};
 const LOGHEAD=['วันที่','ส่วนงาน','เวร/จุด','ผู้อยู่เวร','ชื่อที่ถูกเบิก (ถ้าเบิก)','เวลาเช็กอิน','บันทึกเมื่อ'];
 $('#adminBtn').onclick=()=>{scrim.classList.add('open');$('#err').textContent='';$('#code').value='';setTimeout(()=>$('#code').focus(),250)};
 $('#cancel').onclick=()=>scrim.classList.remove('open');
@@ -713,7 +731,7 @@ function bahtText(n){
 }
 function drawSummary(r){
   const root=$('#pre');root.innerHTML='';S.sumData=r;S.payAdj=S.payAdj||{};S.amt=S.amt||{};let P=root;
-  const mkSect=t=>{const d=el('div',null,'sect'+(t===ADMT[0]?' official':''));d.dataset.t=t;d.appendChild(el('div','สรุปเวร '+ymTitle(r.ym)+' · '+t,'pt2'));root.appendChild(d);return d};
+  const mkSect=t=>{const d=el('div',null,'sect'+((t===ADMT[0]||t==='สรุปจ่ายแทน')?' official':''));d.dataset.t=t;d.appendChild(el('div','สรุปเวร '+ymTitle(r.ym)+' · '+t,'pt2'));root.appendChild(d);return d};
   const nav=el('div',null,'sumnav noprint'),pv=el('button','‹','btn ghost sm'),nx=el('button','›','btn ghost sm');
   pv.onclick=()=>{S.sym=ymShift(S.sym,-1);loadSummary()};nx.onclick=()=>{S.sym=ymShift(S.sym,1);loadSummary()};
   nav.appendChild(pv);nav.appendChild(el('b',ymTitle(r.ym)));nav.appendChild(nx);P.appendChild(nav);
@@ -729,6 +747,12 @@ function drawSummary(r){
     t.appendChild(tb);w.appendChild(t);return w};
   const sec=t=>P.appendChild(el('h4',t,'sumh')),none=t=>P.appendChild(el('div',t,'card sub'));
 
+  /* รวมคนที่ชื่อ+นามสกุลตรงกัน (ต่างแค่คำนำหน้า เช่น "น.ส.วรรษมน นุ่นหมื่น" = "วรรษมน นุ่นหมื่น") ให้เป็นคนเดียว และแสดงชื่อแบบไม่มีคำนำหน้า (บรรทัดเดียว ตรงกัน) */
+  {const allNm=new Set();r.rows.forEach(x=>{if(x.worker)allNm.add(x.worker);if(x.orig)allNm.add(x.orig)});
+   const byk={};[...allNm].forEach(nm=>{const k=nz(stripTitle(nm))||nz(nm);(byk[k]=byk[k]||[]).push(nm)});
+   const canonOf={};Object.keys(byk).forEach(k=>{const pick=byk[k].slice().sort((a,b)=>b.length-a.length||th(a,b))[0];const disp=stripTitle(pick)||String(pick).trim();byk[k].forEach(nm=>canonOf[nm]=disp)});
+   r.rows=r.rows.map(x=>({...x,worker:canonOf[x.worker]||x.worker,orig:x.orig?(canonOf[x.orig]||x.orig):''}));}
+
   const per={},ensure=nm=>per[nm]||(per[nm]={cnt:{},days:new Set(),sub:0,away:0}),sw=[];
   r.rows.forEach(x=>{const o=ensure(x.worker);o.cnt[x.item]=(o.cnt[x.item]||0)+1;o.days.add(x.date);
     if(x.orig){o.sub++;ensure(x.orig).away++;sw.push(x)}});
@@ -742,17 +766,21 @@ function drawSummary(r){
 
   /* ===== 1) คิดค่าตอบแทน (ชื่อทุกคน + ยอดรวมเงิน ไม่มีช่องอัตรา) — พิมพ์ได้ ===== */
   P=mkSect(ADMT[0]);
+  {const [yy,mm]=r.ym.split('-').map(Number),oh=el('div',null,'offhead');
+   oh.appendChild(el('div','สรุปค่าตอบแทนการปฏิบัติงานนอกเวลาราชการ','oh1'));
+   oh.appendChild(el('div','ประจำเดือน'+TM[mm-1]+' พ.ศ. '+(yy+543),'oh2'));
+   oh.appendChild(el('div','งานธนาคารเลือด','oh2'));P.appendChild(oh);}
   const compWrap=el('div');P.appendChild(compWrap);
   function renderComp(){
-    let gt=0,T={a:0,b:0,c:0,d:0,e:0,f:0,s:0};
+    let gt=0,T={a:0,b:0,c:0,dE:0,dS:0,e:0,f:0};
     const rows=names.filter(nm=>cnt(per[nm],ALL)>0).map(nm=>{const o=per[nm];
-      const a=o.cnt['เวรเช้า OPD 6 โมง']||0,b=o.cnt['เวรเช้า OPD 7 โมง']||0,c=o.cnt['เช้า']||0,d=donCnt(o),e=o.cnt['บ่าย']||0,f=o.cnt['ดึก']||0,s=a+b+c+d+e+f,m=totalMoney(nm);
-      gt+=m;T.a+=a;T.b+=b;T.c+=c;T.d+=d;T.e+=e;T.f+=f;T.s+=s;
-      return[nm,dash(a),dash(b),dash(c),dash(d),dash(e),dash(f),String(s),money(m)]});
+      const a=o.cnt['เวรเช้า OPD 6 โมง']||0,b=o.cnt['เวรเช้า OPD 7 โมง']||0,c=o.cnt['เช้า']||0,dE=o.cnt['เวรเช้า Donor']||0,dS=o.cnt['เวรปั่นบ่าย']||0,e=o.cnt['บ่าย']||0,f=o.cnt['ดึก']||0,m=totalMoney(nm);
+      gt+=m;T.a+=a;T.b+=b;T.c+=c;T.dE+=dE;T.dS+=dS;T.e+=e;T.f+=f;
+      return[nm,dash(a),dash(b),dash(a+b),dash(c),dash(dE),dash(dS),dash(e),dash(f),dash(c+dE+dS+e+f),money(m)]});   /* ช่อง 4 = รวมเฉพาะเจาะเลือด OPD (6+7) · ช่องก่อนรวมเงิน = รวมเวร x-match เช้า เป็นต้นไป (c+Donor+บ่าย+ดึก) */
     compWrap.innerHTML='';
     if(!rows.length){compWrap.appendChild(el('div','ยังไม่มีข้อมูลสำหรับเดือนนี้','card sub'));return}
-    const w=table(['ชื่อ–สกุล','เวรเช้า\n6 โมง','เวรเช้า\n7 โมง','X-match\nเช้า','ห้อง\nDonor','X-match\nบ่าย','X-match\nดึก','รวม\nเวร','รวมเงิน\n(บาท)'],
-      rows,['รวมทั้งหมด',String(T.a),String(T.b),String(T.c),String(T.d),String(T.e),String(T.f),String(T.s),money(gt)+' บาท']);
+    const w=table(['ชื่อ–สกุล','เวรเช้า\n6 โมง','เวรเช้า\n7 โมง','รวมเจาะเลือด\n(6+7)','X-match\nเช้า','เวรเช้า\nDonor','เวรปั่น\nบ่าย','X-match\nบ่าย','X-match\nดึก','รวมเวร\n(x-match+Donor)','รวมเงิน\n(บาท)'],
+      rows,['รวมทั้งหมด',String(T.a),String(T.b),String(T.a+T.b),String(T.c),String(T.dE),String(T.dS),String(T.e),String(T.f),String(T.c+T.dE+T.dS+T.e+T.f),money(gt)+' บาท']);
     w.firstChild.classList.add('comp');compWrap.appendChild(w);
     compWrap.appendChild(el('div','(ตัวอักษร) '+bahtText(gt),'bahttext'));
     compWrap.appendChild(el('div','* ยอดเงินรวมมาจากที่กรอกไว้ในแต่ละห้อง (แท็บของแต่ละห้อง)','pre noprint'));
@@ -800,11 +828,11 @@ function drawSummary(r){
     const ppl=names.filter(nm=>cnt(per[nm],items)>0).sort(th);
     if(!ppl.length){none('ยังไม่มีข้อมูล');return}
     const w=el('div',null,'tw flat'),t=document.createElement('table'),hd=document.createElement('tr');
-    ['ชื่อ','วัน',...items,'ค่าตอบแทน\n(บาท)'].forEach(x=>hd.appendChild(el('th',x)));
+    ['ชื่อ',...items,'ค่าตอบแทน\n(บาท)'].forEach(x=>hd.appendChild(el('th',x)));
     const thd=document.createElement('thead');thd.appendChild(hd);t.appendChild(thd);
     const tb=document.createElement('tbody');
     ppl.forEach(nm=>{const o=per[nm],tr=document.createElement('tr');
-      tr.appendChild(el('td',nm));tr.appendChild(el('td',String(o.days.size)));
+      tr.appendChild(el('td',nm));
       items.forEach(k=>tr.appendChild(el('td',dash(o.cnt[k]))));
       const mc=document.createElement('td'),inp=el('input');inp.type='number';inp.inputMode='numeric';inp.min='0';inp.className='payamt';
       const key=zid+'|'+nm;inp.value=(key in S.amt)?S.amt[key]:rateDef(o,items);
@@ -815,6 +843,31 @@ function drawSummary(r){
   roomTab(2,'เจาะเลือด',DRAW,'เวรเช้าเจาะเลือด OPD');
   roomTab(3,'Donor',DON,'ห้อง Donor');
   roomTab(4,'ห้องจ่ายเลือด',XM,'ห้องจ่ายเลือด / x-match');
+
+  /* ===== 6) สรุปจ่ายแทน: อยู่จริงกี่เวร + ต้องจ่ายใครกี่เวร (แบบเอกสาร พิมพ์ได้) ===== */
+  P=mkSect('สรุปจ่ายแทน');
+  {
+    const [yy,mm]=r.ym.split('-').map(Number);
+    const oh=el('div',null,'offhead');
+    oh.appendChild(el('div','สรุปวันปฏิบัติงานนอกเวลาราชการ','oh1'));
+    oh.appendChild(el('div','ประจำเดือน'+TM[mm-1]+' พ.ศ. '+(yy+543),'oh2'));
+    oh.appendChild(el('div','งานธนาคารเลือด','oh2'));
+    P.appendChild(oh);
+    /* คิดเฉพาะห้อง x-match (ห้องจ่ายเลือด) ที่มีการเบิกแทนเท่านั้น */
+    const xm=r.rows.filter(x=>x.zone==='ห้องจ่ายเลือด');
+    const billed={},actual={};
+    xm.forEach(x=>{actual[x.worker]=(actual[x.worker]||0)+1;const own=x.orig||x.worker;billed[own]=(billed[own]||0)+1});
+    const pay={},inv=new Set();   // pay[ผู้จ่าย][ผู้รับ] = จำนวนเวร, inv = คนที่เกี่ยวกับการเบิกแทน (จ่ายหรือรับ)
+    xm.filter(x=>x.orig&&x.orig!==x.worker).forEach(x=>{const payer=rev?x.worker:x.orig,payee=rev?x.orig:x.worker;(pay[payer]=pay[payer]||{});pay[payer][payee]=(pay[payer][payee]||0)+1;inv.add(x.worker);inv.add(x.orig)});
+    const sumTxt=nm=>Object.keys(pay[nm]||{}).sort(th).map(pe=>'จ่ายให้ '+pe+' '+pay[nm][pe]+' เวร').join(', ');
+    const listNames=[...inv].sort(th);
+    if(!listNames.length)none('เดือนนี้ไม่มีการเบิกแทนในห้อง x-match (ไม่มีใครต้องจ่ายใคร)');
+    else{let i=0,tb=0,ta=0;
+      const brows=listNames.map(nm=>{const bb=billed[nm]||0,aa=actual[nm]||0;tb+=bb;ta+=aa;return[String(++i),nm,dash(bb),dash(aa),sumTxt(nm)||'·']});
+      P.appendChild(table(['ลำดับ','ชื่อ–นามสกุล','ชื่อเบิก','อยู่จริง','สรุป'],brows,['','รวม',String(tb),String(ta),'']));
+      P.appendChild(el('div','* เฉพาะห้อง x-match · "ชื่อเบิก" = เวรที่ใช้ชื่อคนนั้นเบิก, "อยู่จริง" = เวรที่มาอยู่จริง (แสดงเฉพาะคนที่มีการเบิกแทน)','pre noprint'));
+    }
+  }
 
   showSect();
 }
@@ -843,7 +896,6 @@ document.querySelectorAll('#seg .pill').forEach(p=>p.onclick=()=>{
   const v=p.dataset.v;document.querySelectorAll('#seg .pill').forEach(x=>x.setAttribute('aria-pressed',x===p));
   $('#viewSave').hidden=v!=='save';$('#viewSch').hidden=v!=='sch';if(v==='sch')S.scrollToday=true;$('#bubble').style.display=v==='sch'?'none':'';document.querySelector('.app').classList.toggle('wide',v==='sch');
   if(v==='sch')loadSch()});
-S.ym=iso(new Date()).slice(0,7);
 const TM=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'],DAYS=['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
 const ymShift=(ym,n)=>{const [y,m]=ym.split('-').map(Number),d=new Date(y,m-1+n,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
 const ymTitle=ym=>{const [y,m]=ym.split('-').map(Number);return TM[m-1]+' '+(y+543)};
@@ -875,7 +927,8 @@ function drawMonth(r){
     const key=r.ym+'-'+String(d).padStart(2,'0'),wd=new Date(y,m-1,d).getDay();
     const tr=document.createElement('tr');tr.className=((wd===0||wd===6||shade.has(d))?'shd':'')+(key===tk?' today':'');
     tr.appendChild(mk('td',d+' '+DAYS[wd],'c0'));
-    SCOL.forEach(c=>{const L=by[key+'|'+c[1]+'|'+c[2]]||[],td=mk('td',null,L.length?'f':'');
+    SCOL.forEach(c=>{const L0=by[key+'|'+c[1]+'|'+c[2]]||[],sn=new Set(),L=L0.filter(x=>{const kk=nz(x.worker)+'|'+nz(x.orig||'');if(sn.has(kk))return false;sn.add(kk);return true});
+      const td=mk('td',null,L.length?'f':'');
       L.forEach(x=>{const nd=mk('div',shortName(x.worker),(x.orig?'nb':'nm')+(x.pending?' pend':''));nd.dataset.full=x.worker;td.appendChild(nd);if(x.orig)td.appendChild(mk('div','เบิก '+shortName(x.orig),'ot'))});
       if(L.length){td.style.cursor='pointer';td.onclick=()=>openCell(key,c[1],c[2],c[0].replace('\n',' '))}
       tr.appendChild(td)});
